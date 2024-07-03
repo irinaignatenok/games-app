@@ -239,6 +239,7 @@
     <meta name="apple-mobile-web-app-title" content="Games App" />
 
     <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="/pages/list/styles.css" />
   </head>
   <body>
     <div class="container">
@@ -265,15 +266,19 @@
               <option value="">- All Games -</option>
               <option value="Action">Action</option>
               <option value="Puzzle">Puzzle</option>
-              <option value="Addventure">Adventure</option>
+              <option value="Adventure">Adventure</option>
             </select>
-            <button type="button">List</button>
+            <button type="button" id="list-button">List</button>
           </form>
+
+          <!-- Game list -->
+          <div id="list-output"></div>
         </div>
       </main>
 
       <!-- Footer -->
       <footer>Copyrignt &copy; 2023. All rights reserved</footer>
     </div>
+    <script src="script.js" type="module"></script>
   </body>
 </html>

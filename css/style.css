@@ -84,6 +84,90 @@ main .content {
     right: 0;
     padding: 1.5rem;
 }
+
+main .content h2 {
+    color: #64646e;
+    margin: 0 0 2rem 0;
+    padding: 0;
+    border-bottom: dotted 1px #64646e;
+}
+
+main .post-container {
+    margin-top: 40px;
+ }
+ main .post-container h2
+{
+ margin: 0;
+}
+
+main .post-container .post-item{
+ background-color:  #fff;
+ border: solid 1px #ccc;
+ padding: 20px;
+ margin-top: 15px;
+}
+main .post-container .post-item h3 {
+ margin: 0;
+ text-transform: capitalize;
+ color: #558f0a;
+ font-size: 21px;
+}
+main .post-container  .post-item .text{
+ color: #64646E;
+ margin-top: 10px;
+ font-size: 16px;
+line-height: 1.3em;
+}
+
+/* offline message */
+
+main .offline-message{
+    background-color: #64646E;
+    margin-top: 10px;
+    padding: 10 px;
+    text-align: center;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 15px;
+}
+
+main .offline-message h3{
+    margin: 0;
+    opacity: 0.75;
+}
+
+#storage-output{
+    background-color: #fff;
+    border: solid 1px #ccc;
+    padding: 1rem;
+    margin-top: 1rem;
+
+}
+#storage-output h3{
+    margin: 0;
+    text-transform: uppercase;
+    color: #64646E;
+    font-size: 0.85rem;
+}
+#storage-output .data {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 0.5rem;
+}
+
+#storage-output .data .entry{
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #6eb60b;
+}
+
+#storage-output .data .entry strong{
+    display: block;
+    color: #909097;
+    font-size: 1rem;
+    font-weight: normal;
+}
 /* Footer */
 footer{
     background-color: #64646E;
@@ -105,6 +189,7 @@ footer{
     .container{
         flex-direction: row;
         padding-bottom: 2.5rem;
+        box-sizing:  border-box;
     }
 
     /* Header */

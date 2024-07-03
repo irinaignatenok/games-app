@@ -1,0 +1,85 @@
+/* filter */
+#game-filter {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#game-filter label{
+    display: block;
+    font-size: 1.3rem;
+    line-height: 1.5rem;
+    width: 100%;
+}
+
+#game-filter select {
+    width: 200px;
+    font-size: 19px;
+    padding: 0.85rem 0.5rem;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+#game-filter button {
+    font-size: 1.3rem;
+    padding: 0.85rem 2rem;
+    background-color: #64646E;
+    border: none;
+    color: #fff;
+    margin: 0 0 0 10px;
+}
+
+/* Items */
+.game-item{
+    background-color: #fff;
+    padding: 15px;
+    border: solid 1px #aaa;
+    margin-top: 10px;
+}
+
+.game-item span {
+    color: #777;
+    font-size: 19px;
+    font-weight: normal;
+    margin-top: 10px;
+}
+.game-item h3 {
+    color: #6eb90b;
+    font-size: 26px;
+    margin: 0;
+    padding: 0;
+}
+.game-item div.status{
+
+    color: #333;
+    font-size: 19px;
+    margin: 10px 0;;
+
+}
+.game-item div.status b{
+    font-size: 17px;
+    color: #777;
+}
+
+.game-item button {
+    display: inline-block;
+    font-size: 1rem;
+    width: 160px;
+    height: 40px;
+    margin:0 10px 0 0;
+    border:none;
+    color: #fff;
+}
+.game-item button.update{
+    background-color: #64646E;
+}
+.game-item button.remove {
+    background-color: #c00;
+}
+
+/* Not - found message */
+.game-not-found{
+    font-style:italic;
+    font-size: 21px;
+    color: #777;
+    margin-top:40px;
+}

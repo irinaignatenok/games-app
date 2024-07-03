@@ -1,0 +1,77 @@
+/* Messages */
+.game-add-success,
+.game-failure {
+display: block;
+background-color: #fff;
+border: solid 7px;
+text-align: center;
+font-size: 27px;
+font-weight: bold;
+padding: 15px;
+margin-bottom: 30px;
+}
+
+.game-add-success {
+    border-color: #0c0;
+    color:#0c0;
+}
+
+.game-failure{
+    border-color: #c00;
+    color: #c00;
+}
+
+.game-failure span {
+    display: block;
+    color: #777;
+    font-size: 18px;
+    font-weight: normal;
+    margin-top: 10px;
+
+}
+
+/* Fields */
+#game-add-form .field {
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+#game-add-form .field label {
+    display: block;
+    width: 100px;
+    line-height: 30px;
+}
+#game-add-form .field input,
+#game-add-form .field select {
+    width: 230px;
+    font-size: 1.3rem;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    border: solid 1px #64646E;
+}
+
+/* Checkbox */
+#game-add-form .checkbox {
+    display: flex;
+    margin-bottom: 30px;
+}
+#game-add-form .checkbox label {
+    display: block;
+    line-height: 20px;
+}
+#game-add-form .checkbox input {
+    width: 20px;
+    height: 20px;
+    margin: 0 10px 0 100px;
+    border: solid 1px #64646E;
+}
+
+/* Button */
+#game-add-form button{
+    font-size: 1.3rem;
+    padding: 0.85rem 2rem;
+    margin: 0 0 0 100px;
+    background-color: #64646E;
+    border: none;
+    color: #fff;
+}
