@@ -2,19 +2,36 @@ import gameDB from '../../js/game-db/game-db.js';
 
 // Gets a refference to the list output div
 const listOutput = document.getElementById('list-output');
-
+console.log("GameDB:", gameDB)
 // Opens the database
 gameDB.open()
     .then(() => {
+
         // Loads the list of game
         gameDB.getAll()
             .then(displayGames) //get data from the database
             .catch((error) => {
                 console.log("Failed to get:", error)
             });
+
+
+        // For the single document
+        // gameDB.get('VgFhRv6jiqe0blRg7MvW').then((game) => {
+        //     console.log('Game:', game)
+        // })
+        //     .catch((error) => {
+        //         console.log('Failde to open', error)
+        //     })
+
     })
     .catch((error) => {
-
+        console.log('Failed to open', error)
+        listOutput.innerHTML = `
+        <div class= 'game-not-found'>
+        There was an error opening the database.
+Please, check your connection and try again later.
+</div>        `
+        document.getElementById('game-filter').style.display = 'none'
     })
 
 // Handle the List button click

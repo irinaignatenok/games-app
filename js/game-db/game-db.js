@@ -1,240 +1,191 @@
-/**
- * Game API for using IndexDB
- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/*
+* GameDB API for using firebase
+*/
 
 class GameDB {
     constructor() {
         this.db = null;
-        this.isAvailable = false;
-
+        this.isAvailable = false
     }
-
 
     open() {
-        return new Promise((resolve, reject) => {  //we need a promise in order to get to open DB and afler show th list
+        return new Promise((resolve, reject) => {
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBk6tWohYtIaPwXPCjPAKiBQ-dl0baKPYo",
+                    authDomain: "games-app-8b49f.firebaseapp.com",
+                    projectId: "games-app-8b49f",
+                    storageBucket: "games-app-8b49f.appspot.com",
+                    messagingSenderId: "698485933401",
+                    appId: "1:698485933401:web:aaf9e280a8821505c57848"
+                };
 
-            //Validated whether the indexDB object is available
-            if ('indexedDB' in window) {
-                // at this step we do not create a DB, we just created a request which we gonna handle below
-                const request = indexedDB.open('Games', 1);
-                console.log('Request', request)
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
 
-                // Handles the errors when opening/ creating the database
-                request.onerror = (event) => {
-                    reject(event.target.error.message);
+
+                // Initialize Cloud Firestore and get a reference to the service
+                const db = getFirestore(app);
+                if (db) {
+                    this.db = db;
+                    this.isAvailable = true
+                    resolve();
+                } else {
+                    reject('DB is not available')
                 }
-                // Handles the success when opening/creating the database
-                request.onsuccess = (event) => {
-                    // Creating a db object
-                    const db = event.target.result;
-                    if (db) {
-                        this.db = db,
-                            this.isAvailable = true;
-                        resolve();
-                    } else {
-                        reject('The database is not available')
-                    }
-                }
+                console.log('Open All', db)
 
-                // Handles the database upgrade.
-                request.onupgradeneeded = (event) => {
-                    console.log("On upgrade", event)
-                    const db = event.target.result;
-                    // Approach with autoincrement keys
-                    // const objectStore = db.createObjectStore('Game', { autoIncrement: true });
-
-                    // console.log('objectStore', objectStore)
-                    // Approach we set up the keys
-                    // 'Game' is like a table in the SQL
-                    const objectStore = db.createObjectStore('Game', { keyPath: 'id' })
-
-
-                    // Creates the indexes.
-                    objectStore.createIndex('title', 'title');
-                    objectStore.createIndex('genre', 'genre');
-                }
-            }
-            else {
-                reject("Your browser doesn't suport IndexDB")
             }
 
+            catch (error) {
+                reject(error.message)
+            }
         })
     }
-
-
-    // Adding to the Data base/ transactions
     add(title, genre, hasFinished) {
-
-        // We need to add the promise to get the promise is everything was added to the database
-        // without promise, first we get false just after a while we get true, because it is a asyncrinise fumction
         return new Promise((resolve, reject) => {
-            // console.log('Add Game')
-            // console.log('[add] Is available:', this.isAvailable)
-            // console.log('[add] Database:', this.db)
             if (!this.isAvailable) {
-                reject('Database not opened')
+                reject("Database not opened")
             }
-
-            // Transaction handlers
-            const transaction = this.db.transaction(['Game'], 'readwrite');
-            transaction.onerror = (event) => {
-                reject(event.target.error.message);
-            }
-            // we need this method just if we have multiple requests
-            transaction.oncomplete = (event) => {
-                console.log('[Transaction] All done:', event)
-            }
-
-            //Store handlers.
-            // objectStore thre is a method which will retreive the store from the transaction
-            const store = transaction.objectStore('Game');
-            const storeRequest = store.add({
-                id: Date.now(),//unique id which will never repeat, unless 2 defferent users will add at the same time
+            // Create the game object to be added
+            const game = {
                 title: title,
                 genre: genre,
                 hasFinished: hasFinished
-            });
-            storeRequest.onerror = (event) => {
-                reject(event.target.error.message)
-            }
-            storeRequest.onsuccess = (event) => {
-                resolve();
-
             }
 
+            // Connect to the Firebase collection  "GameList is a name of the collection"
+            const dbCollection = collection(this.db, "GameList")
 
+            // Include the new object to the collection
+            addDoc(dbCollection, game)
+                .then((docRef) => {
+                    console.log("Firebase saved", docRef.id)
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error.message)
+                });
         });
     }
-
     getAll() {
-
         return new Promise((resolve, reject) => {
-            // console.log('Game get all')
-            // console.log('[getAll] Is available', this.isAvailable);
-            // console.log('[getAll] Database:', this.db);
             if (!this.isAvailable) {
-                reject('Database not opened')
-            }
-            // Transaction handlers.
-            const transaction = this.db.transaction(['Game'], 'readonly');
-            transaction.onerror = (event) => {
-                reject(event.target.error.message)
+                reject('Database not opened');
             }
 
-            // Store handlers.
-            const store = transaction.objectStore('Game');
-            const request = store.getAll();
-            request.onerror = (event) => {
-                reject(event.target.error.message)
-            }
-            request.onsuccess = (event) => {
-                resolve(event.target.result); //or(request.result)
-            }
+            // Connects to the Firebase collection.
+            const dbCollection = collection(this.db, 'GameList')
+
+            // Gets the date from the collection
+            getDocs(dbCollection)
+                .then((querySnapShot) => {
+                    const result = [];
+                    querySnapShot.forEach((doc) => {
+                        const data = doc.data()
+                        data.id = doc.id  //include id into the data oblect
+                        result.push(data)
+                    });
+                    resolve(result);
+                })
+                .catch((error) => {
+                    reject(error.message)
+                })
         })
     }
-
-    // to get a single element from the database
     get(id) {
+        console.log("GameDB get:", id);
         return new Promise((resolve, reject) => {
             if (!this.isAvailable) {
-                reject("Database not opened!")
+                reject('Database not found')
             }
 
-            // Transaction handlers.
-            const transaction = this.db.transaction(['Game'], 'readonly')
-            transaction.onerror = (event) => {
-                reject(eve.target.error.message)
-            };
+            // Get the document reference
+            const docRef = doc(this.db, 'GameList', id);
 
-            // Gets a data from the store
-            const store = transaction.objectStore('Game');
-            const request = store.get(id);
-            request.onerror = (event) => {
-                reject(eve.target.error.message)
-            }
-            request.onsuccess = (event) => {
-                // the data that I received from the db
-                resolve(event.target.result)
-            }
+            // Retrieve the document
+            getDoc(docRef)
+                .then((docSnap) => {
+                    const data = docSnap.data()
+                    resolve(data)
+
+                })
+                .catch((error) => {
+                    reject(error.message)
+                })
         })
     }
-
     getByGenre(genre) {
         return new Promise((resolve, reject) => {
             if (!this.isAvailable) {
-                reject('Database not opened')
+                reject('Database not opened!')
             }
 
-            // Transaction handlers.
-            const transaction = this.db.transaction(['Game'], 'readonly')
-            transaction.onerror = (event) => {
-                reject(event.target.error.message)
-            };
+            // Connection to the Firebase collection
 
-            // Get all data from the index genre
-            const store = transaction.objectStore('Game');
-            const index = store.index('genre');
-            const request = index.getAll(genre);
-            request.onerror = (event) => {
-                reject(event.target.error.message)
-            }
-            request.onsuccess = (event) => {
-                resolve(event.target.result);
-            }
+            const dbCollection = collection(this.db, 'GameList');
+
+            // Creates a query for the collection
+            const dbQuery = query(dbCollection, where('genre', "==", genre))
+
+            // Gets the data from the query
+            getDocs(dbQuery)
+                .then((querySnapShot) => {
+                    const result = [];
+                    querySnapShot.forEach((doc) => {
+                        const data = doc.data()
+                        data.id = doc.id;
+                        result.push(data)
+                    })
+                    resolve(result)
+                })
+                .catch((error) => {
+                    reject(error.message)
+                })
 
         })
     }
-
-    // Update DB method
-    update(updatedGame) {
+    update(updateGame) {
         return new Promise((resolve, reject) => {
             if (!this.isAvailable) {
-                reject("DataBase not opened")
+                reject("Database not opened")
             }
 
-            // Transaction handlers.
-            const transaction = this.db.transaction(['Game'], 'readwrite');
-            // there is asynchronise function however it is not a promise, We have to call callback functions
-            transaction.onerror = (event) => {
-                reject(event.target.error.message)
-            }
+            // Get the document reference
+            const docRef = doc(this.db, 'GameList', updateGame.id);
 
-            // Gets the store
-            const store = transaction.objectStore('Game');
-            const request = store.put(updatedGame)
-            request.onerror = (event) => {
-                reject(event.target.error.message)
-            }
-            request.onsuccess = (event) => {
-                resolve();
-            }
+            // Update the document
+            updateDoc(docRef, { hasFinished: updateGame.hasFinished })
+                .then(() => {
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error.message)
+                })
         })
     }
-
     delete(id) {
         return new Promise((resolve, reject) => {
             if (!this.isAvailable) {
-                reject('Database not opened')
+                reject('Database not opened!')
             }
 
-            // Transaction handlers.
-            const transaction = this.db.transaction(['Game'], 'readwrite');
-            transaction.onerror = (event) => {
-                reject(event.target.error.message)
-            }
+            // Get the document reference
+            const docRef = doc(this.db, 'GameList', id)
 
-            // Get the Store
-            const store = transaction.objectStore('Game');
-            const request = store.delete(id);
-            request.onerror = (event) => {
-                reject(event.target.error.message)
-            }
-            request.onsuccess = (event) => {
-                resolve();
-            }
+            // Delete the document
+            deleteDoc(docRef)
+                .then(() => {
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error.message)
+                })
         })
     }
 }
-// it will be import an instance of the class
+
 export default new GameDB();

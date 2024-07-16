@@ -131,23 +131,27 @@ self.addEventListener('fetch', (event) => {
 
 
     // // THE BEST Cache strategy: State While Revalidate
-    event.respondWith(
-        caches.open(cacheName)
-            .then((cache) => {
-                return cache.match(event.request)
-                    .then((cachedResponse) => {
-                        const fetchedResponse = fetch(event.request)
-                            .then((networkResponse) => {
-                                cache.put(event.request, networkResponse.clone());
-                                return networkResponse;
-                            })
-                            // if there is not connection I have to get sothing from the cache
-                            .catch(() => {
-                                return cache.match('/offline.html')
-                            })
-                        return cachedResponse || fetchedResponse;
-                    })
-            })
-    )
+    console.log("Request:", event.request.method)
+    if (event.request.method === 'GET') {
+        event.respondWith(
+            caches.open(cacheName)
+                .then((cache) => {
+                    return cache.match(event.request)
+                        .then((cachedResponse) => {
+                            const fetchedResponse = fetch(event.request)
+                                .then((networkResponse) => {
+                                    cache.put(event.request, networkResponse.clone());
+                                    return networkResponse;
+                                })
+                                // if there is not connection I have to get sothing from the cache
+                                .catch(() => {
+                                    return cache.match('/offline.html')
+                                })
+                            return cachedResponse || fetchedResponse;
+                        })
+                })
+        )
+    }
+
 })
 

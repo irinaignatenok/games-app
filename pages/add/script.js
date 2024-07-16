@@ -27,6 +27,7 @@ document.getElementById('add-button').addEventListener('click', () => {
         // Add the game to the database
         gameDB.add(title, genre, hasFinished)
             .then(() => {
+                console.log('Add successfuly')
                 // Adds a successfull message
                 messageOutput.innerHTML = `
         <div class = 'game-add-success'>
@@ -41,7 +42,7 @@ document.getElementById('add-button').addEventListener('click', () => {
 
             })
             .catch((error) => {
-                console.log('Add error', error);
+                console.log('Add error', error.message);
                 messageOutput.innerHTML = `
                 <div class = 'game-failure'>
                 Database error!
