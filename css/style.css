@@ -118,6 +118,11 @@ main .post-container  .post-item .text{
  font-size: 16px;
 line-height: 1.3em;
 }
+#notification{
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    padding: 0.5rem 1.5rem;
+}
 
 /* offline message */
 

@@ -1,9 +1,11 @@
-const cacheName = 'cacheAssets-v14'
+import gameDB from './js/game-db/game-db.js';
+
+const cacheName = 'cacheAssets-v15'
 
 // On install Event
 // Triggered when the service worker is installed
 self.addEventListener('install', (event) => {
-    console.log('[SW]Install:', event);
+    // console.log('[SW]Install:', event);
 
     // Activate itself when it enters the waiting phase
     self.skipWaiting();
@@ -56,7 +58,7 @@ self.addEventListener('activate', (event) => {
         caches.keys()
             .then((cacheNames) => {
                 cacheNames.forEach((item) => {
-                    console.log('Found: ', item)
+                    // console.log('Found: ', item)
                     if (item !== cacheName) {
                         caches.delete(item);
                     }
@@ -120,7 +122,7 @@ self.addEventListener('fetch', (event) => {
 
     // //Cache strategy: Network with cache Fallback
     // event.respondWith(
-    //     fetch(event.request)
+    //     fetch(event.request)  
     //         .catch(() => {
     //             return caches.open(cacheName)
     //                 .then((cache) => {
@@ -155,3 +157,125 @@ self.addEventListener('fetch', (event) => {
 
 })
 
+// Broadcast a message to the user
+clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
+        client.postMessage({
+            action: 'game-sync',
+            count: games.length
+        })
+    })
+})
+// On Message Posted
+
+self.addEventListener('message', (event) => {
+    const data = event.data;
+    // console.log("Data", data)
+    // console.log("Message received", event)
+
+    const whoPostedTheMEssage = event.source;
+    // console.log('Sending a messgae to the Client!...')
+    whoPostedTheMEssage.postMessage("Thanks for the message!!!")
+
+
+    //  Message to all clients
+    const options = {
+        includeUncontrolled: false,
+        type: 'window'
+    };
+    clients.matchAll(options)
+        .then((matchClients) => {
+            matchClients.forEach((client) => {
+                if (client.id !== whoPostedTheMEssage.id) {
+                    client.postMessage('Soneone else send a message')
+                }
+            })
+        })
+})
+
+
+// On Background Synchronization
+// 
+self.addEventListener('sync', (event) => {
+    console.log("[SW] Bg Sync:", event);
+
+    switch (event.tag) {
+        case 'my-tag-name':
+            console.log('Do Something');
+            // Perform tasks for 'my-tag-name' synchronization
+            // event.waitUntil(doSomething());
+            break;
+
+        case 'add-game':
+            console.log("Add ME");
+            addGame()
+            // Call the function to add the game, ensuring it returns a promise
+            // event.waitUntil(addGame());
+            break;
+    }
+
+});
+
+function addGame() {
+
+    // Open the offline database
+    gameDB.dbOffline.open()
+        .then(() => {
+            // Get all locally saved games
+            gameDB.dbOffline.getAll()
+                .then((games) => {
+                    // Open the online database
+                    gameDB.dbOnline.open()
+                        .then(() => {
+
+                            // Save the games online
+                            games.forEach(game => {
+                                gameDB.dbOnline.add(game.title, game.genre, game.hasFinished)
+                                    .then(() => {
+                                        console.log("Game saved", game);
+                                        gameDB.dbOffline.delete(game.id);
+                                    })
+                                    .catch((error) => console.log(error))
+                            });
+                            //  Broadcast a message to the user(clients are inside service worker)
+                            // we trigger this function in add/script.js   // On Message Posted to a Client.
+                            clients.matchAll()
+                                .then((clients) => {
+                                    clients.forEach((client) => {
+                                        client.postMessage({
+                                            action: 'game-sync',
+                                            count: games.length
+                                        })
+                                    })
+                                })
+                            // Also display notification
+                            const message = `Syncronized ${games.lengh} games!`
+                            registration.showNotofication(message);
+                        })
+                        .catch((error) => console.log(error))
+                })
+
+        })
+        .catch((error) => console.log(error))
+}
+
+/**
+ * On Notification Click. it will trigger if in the script file we have a function showNotofocation
+ *
+ */
+
+self.addEventListener('notificationclick', (event) => {
+    const data = event.notification.data;
+    console.log('Event', event)
+    switch (event.action) {
+        case 'confirm':
+            break;
+
+        case 'cancel':
+            break;
+
+        default:
+            console.log('Clicked on the notification')
+            break;
+    }
+})

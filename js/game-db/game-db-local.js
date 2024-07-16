@@ -15,10 +15,10 @@ class GameDB {
         return new Promise((resolve, reject) => {  //we need a promise in order to get to open DB and afler show th list
 
             //Validated whether the indexDB object is available
-            if ('indexedDB' in window) {
+            if (indexedDB) {
                 // at this step we do not create a DB, we just created a request which we gonna handle below
                 const request = indexedDB.open('Games', 1);
-                console.log('Request', request)
+                // console.log('Request', request)
 
                 // Handles the errors when opening/ creating the database
                 request.onerror = (event) => {
