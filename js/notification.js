@@ -1,3 +1,4 @@
+import gameDbCloud from './game-db/game-db-cloud.js '
 // console.log(window)
 
 const notificationButton = document.getElementById('notification');
@@ -12,7 +13,8 @@ if ('Notification' in window && 'serviceWorker' in navigator) {
                 break;
 
             case 'granted':
-                displayNotification();
+                // displayNotification();
+                configurePushSubscription();  //push notifications
                 break
 
             case 'denied':
@@ -32,7 +34,8 @@ function requestUserPermission() {
         .then((permission) => {
             // console.log('User choice', permission);
             if (permission === 'granted') {
-                displayNotification
+                displayNotification();
+                configurePushSubscription();
             } else {
                 notificationNotAllowed();
             }
@@ -77,3 +80,47 @@ function notificationNotAllowed() {
     console.log("Not allowed Notification")
 }
 
+/**
+ * Subscribe the device to receive push messages
+ * we know that we serviceWorker ready, we validated before
+ */
+async function configurePushSubscription() {
+    // there is a old aproach
+    // navigator.serviceWorker.ready
+    //     .then((registration) => {
+    //         // retrieve push API from push manager which is located in the registration
+    //         // console.log('Registration:', registration)
+    //         const pushManager = registration.pushManager;
+    //         console.log('pushManager', pushManager)
+    //     }).catch()
+
+    // Working with await/async always works with try and catch to catch the error
+    try {
+        const registration = await navigator.serviceWorker.ready
+        const pushManager = registration.pushManager;
+        // console.log('pushManager', pushManager)
+
+        // to validate is the device has a subscription got the push notification
+        let subscription = await pushManager.getSubscription();
+        if (subscription === null) {
+            // Not subcribed
+            // console.log('No subscription was found');
+            const publicKey = "BAE7PMTm_LuDJW0kuf-wj1F_D2qAifC671shosiwViFnBf7xsPBW2u1Nc6W64ITBV4zWtjKaDzV-GVehbYbFpgA"
+            const options = {
+                userVisibleOnly: true,
+                applicationServerKey: publicKey
+            };
+            subscription = await pushManager.subscribe(options); //to subscribe device
+
+            // Save the new subscription to the database
+            await gameDbCloud.open()
+            await gameDbCloud.subscribe(subscription);//subscription came from db-cloud
+
+            console.log('Subscription saved')
+        }
+        console.log('Current Subscription:', JSON.stringify(subscription))
+    }
+    catch (error) {
+        console.log('Subscription error', error)
+    }
+}

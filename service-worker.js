@@ -276,6 +276,30 @@ self.addEventListener('notificationclick', (event) => {
 
         default:
             console.log('Clicked on the notification')
+            const openPromise = clients.openWindow('/pages/add');
+            event.waitUntil(openPromise);
             break;
     }
 })
+
+/**
+ * On Push message received.
+ */
+self.addEventListener('push', (event) => {
+    console.log('Event:', event)
+    console.log('Data:', event.data); //it is pushed from the server
+
+    const data = event.data.json(); //receiving json method from the server
+    console.log('Data content:', data)
+
+    // Display notification
+    const options = {
+        body: data.description,
+        image: data.image
+    }
+    // event.waitUntil //showNotification is a asyncronies function we use this method make surewe get everything up to here and move to another line
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+        // self.registration.showNotification('My notification')//notification will come back from the server
+    )
+});

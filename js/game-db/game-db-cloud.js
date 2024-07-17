@@ -186,6 +186,30 @@ class GameDB {
                 })
         })
     }
+
+    /**
+     * Saves a push notification subcription
+     * @param {*} subscription 
+     */
+    subscribe(subscription) {
+        return new Promise((resolve, reject) => {
+            if (!this.isAvailable) {
+                reject('Database not opened')
+            }
+
+            // Connect to the Firebase collection by creating a new collection
+            const dbCollection = collection(this.db, 'Subscriptions');
+            addDoc(dbCollection, {
+                subscription: JSON.stringify(subscription)
+            })
+                .then((docRef) => {
+                    resolve()
+                })
+                .catch((error) => {
+                    reject(error.message)
+                })
+        })
+    }
 }
 
 export default new GameDB();

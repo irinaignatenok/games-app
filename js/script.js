@@ -84,6 +84,7 @@ function getAvailableDiskSpace() {
         navigator.storage.estimate()
             .then((result) => {
                 const storageOutput = document.getElementById('storage-output')
+                storageOutput.style.display = 'block'
                 storageOutput.innerHTML = '<h3>Device Storage</h3>'
 
                 // Calculates the remaining quota
