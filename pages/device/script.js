@@ -180,9 +180,19 @@ function handleScreenOrientationAPI() {
         output.appendChild(message);
 
         buttonLockPortrait.addEventListener('click', () => {
-            screen.orientation.lock('portrait')
+            screen.orientation.lock('portrait-primary')
                 .then(() => {
                     message.innerText = 'Locked to portrait';
+                })
+                .catch((error) => {
+                    message.innerText = `Lock error: ${error}`
+                })
+        })
+
+        buttonLockLandscape.addEventListener('click', () => {
+            screen.orientation.lock('landscape-primary')
+                .then(() => {
+                    message.innerText = "locked to landscape"
                 })
                 .catch((error) => {
                     message.innerText = `Lock error: ${error}`
