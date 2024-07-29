@@ -128,7 +128,35 @@ function handleNetworkInformation() {
 
 }
 function handleFullscreenAPI() {
-    output.innerText = "Fullscreen API ...."
+    if ('fullscreenElement' in document && 'exitFullscreen' in document) {
+        // Create the helper elements
+        const button = document.createElement('button');
+        button.innerHTML = 'Toggle Fullscreen';
+        output.appendChild(button);
+
+        const message = document.createElement('div');
+        message.innerText = 'Click on the button above';
+        output.appendChild(message)
+
+        button.addEventListener('click', () => {
+            // console.log('Toggle fullscreen ...')
+            if (!document.fullscreenElement) {
+                // document.documentElement.requestFullscreen() // documentElement is an entire screen
+                // full screen for the particular element o the screen e.x main 
+                document.getElementById('main-content').requestFullscreen()
+                    .then(() => {
+                        message.innerText = 'You are in the fullscreen now.';
+                    })
+            } else {
+                document.exitFullscreen()
+                    .then(() => {
+                        message.innerText = "You left fullscreen mode"
+                    })
+            }
+        })
+    } else {
+        output.innerText = 'Fullscreen not available or enabled o this device.'
+    }
 }
 
 function handleScreenOrientationAPI() {
