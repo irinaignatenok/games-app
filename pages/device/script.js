@@ -160,7 +160,38 @@ function handleFullscreenAPI() {
 }
 
 function handleScreenOrientationAPI() {
-    output.innerText = "Screen Orientation API ....."
+    console.log('Screen', screen) //this API in the window object so we can call just screen
+    if ('screen' in window && 'orientation' in screen) {
+        // Create the helper elements
+        const buttonLockPortrait = document.createElement('button');
+        buttonLockPortrait.innerText = 'Lock Portrait';
+        output.appendChild(buttonLockPortrait);
+
+        const buttonLockLandscape = document.createElement('button');
+        buttonLockLandscape.innerText = 'Lock Landscape';
+        output.appendChild(buttonLockLandscape);
+
+        const buttonUnlock = document.createElement('button');
+        buttonUnlock.innerText = 'Unlock';
+        output.appendChild(buttonUnlock)
+
+        const message = document.createElement('div');
+        message.innerText = 'Choose an opition above';
+        output.appendChild(message);
+
+        buttonLockPortrait.addEventListener('click', () => {
+            screen.orientation.lock('portrait')
+                .then(() => {
+                    message.innerText = 'Locked to portrait';
+                })
+                .catch((error) => {
+                    message.innerText = `Lock error: ${error}`
+                })
+        })
+
+    } else {
+        output.innerText = 'Screen orientation is not available on the device'
+    }
 }
 
 function handleVibrationAPI() {
