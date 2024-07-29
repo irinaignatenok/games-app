@@ -425,7 +425,18 @@ async function handleAccelerometer() {
     })
     // The reading event is fired when a new reading is available on a sensor
     accelerometer.addEventListener('reading', () => {
+        const axisX = accelerometer.x.toFixed(2);
+        const axisY = accelerometer.y.toFixed(2);
+        const axisZ = accelerometer.z.toFixed(2);
 
+        message.innerHTML = `
+        <div>Acceleration along the: </div>
+        <ul>
+        <li>X-axis is <b>${axisX}</b> m/s<sup>2</sup></li>
+<li>Y-axis is <b>${axisY}</b> m/s<sup>2</sup></li>
+<li>Z-axis is <b>${axisZ}</b> m/s<sup>2</sup></li>
+</ul>
+        `
     })
     console.log('acceleromer', accelerometer)
 
