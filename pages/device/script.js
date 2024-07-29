@@ -314,7 +314,45 @@ async function handleScreenWakeLockAPI() {
 }
 
 function handleGeolocationAPI() {
-    output.innerText = 'Geolocation API....'
+    if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            // On Success callback
+            (position) => {
+                console.log('Current Position:', position);
+                output.innerHTML = `
+                <strong>Current Position: </strong>
+                <div> Latitude: ${position.coords.latitude}</div>
+                <div> Longitude: ${position.coords.longitude}</div>
+                <div> More or less ${position.coords.accuracy}meters.</div>
+                `
+            },
+
+            // On Error callback
+            (error) => {
+                console.log('Current Position Error:', error)
+                output.innerText = 'Geolocation failed to get the current position'
+            });
+
+        // Watch position change when we move with the device
+        navigator.geolocation.watchPosition(
+            // On Success callback
+            (position) => {
+                output.innerHTML = `
+<strong> Watching Position: </strong>
+<div>Latitude: ${position.coords.latitude}</div>
+<div>Longitude: ${position.coords.longitude}</div>
+<div>More or Less ${position.coords.accuracy}meters.</div>
+`
+            },
+            (error) => {
+                console.log('Watch Positin Error:', error)
+                output.innerText = 'Geolocation failed to watch position.'
+
+            });
+
+    } else {
+        output.innerText = 'Geolocation API not available on this device'
+    }
 }
 
 function handlePermissionAPI() {
