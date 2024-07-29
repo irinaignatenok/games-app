@@ -239,11 +239,33 @@ function handleVibrationAPI() {
 }
 
 function handlePageVisibility() {
-    output.innerText = "Page Visibility"
+    console.log("visibility", document.visibilityState);
+    document.addEventListener('visibilitychange', () => {
+        console.log("visibility", document.visibilityState);
+        if (document.visibilityState === 'hidden') {
+            Notification.requestPermission((permission) => {
+                if (permission === 'granted') {
+                    navigator.serviceWorker.ready
+                        .then((registration) => {
+                            registration.showNotification('Come back, please!!!', {
+                                body: "Don't leave me here alone.",
+                                icon: '/images/logo.jpeg'
+                            })
+                        })
+                }
+            })
+        } else {
+            output.innerHTML = 'Welcome back!!!'
+        }
+    })
 }
 
-function handleIdleDetectionAPI() {
-    output.innerText = 'Idle Detection API ...'
+async function handleIdleDetectionAPI() {
+    if ('IdleDetector:, IdleDetector') {
+        const permisson = await IdleDetector.requestPermission()
+    } else {
+        output.innerText = "IdleDetector not supported on this device"
+    }
 }
 
 function handleScreenWakeLockAPI() {
