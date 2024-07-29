@@ -356,12 +356,100 @@ function handleGeolocationAPI() {
     }
 }
 
-function handlePermissionAPI() {
-    output.innerText = 'Permissions....'
+async function handlePermissionAPI() {
+    if ('permissions' in navigator) {
+        console.log('Permission', navigator.permissions)
+        const permissionStatus = await navigator.permissions.query({
+            name: 'notifications',
+            userVisibleOnly: true //Only necessary for the Push API
+        })
+        console.log('Status:', permissionStatus)
+        output.innerHTML = `
+        Status for <b>${permissionStatus.name}</b>: ${permissionStatus.state}
+        `;
+
+        // Watches for changes on the permissons; this triggers when the permission changes
+        permissionStatus.addEventListener('change', (event) => {
+            const permissionStatus = event.currentTarget;
+            output.innerHTML += `
+            <div> Changed Status for <b>${permissionStatus.name}</b>: ${permissionStatus.state}</div>
+            `
+        })
+    } else {
+        output.innerText = 'Permission API not available on this device.'
+    }
 }
 
-function handleAccelerometer() {
-    output.innerText = 'Accelerometer...'
+async function handleAccelerometer() {
+
+    // Early return statement.
+
+    // Validates the sensor API
+    if (!('Accelerometer' in window)) {
+        output.innerText = 'Accelerometer not available on this device'
+        return;
+    }
+
+    // We never get to this line if the accelerometer is available
+    // If we are here, that means the accellerometer is available
+
+    // Validates the Permission Api
+    if (!('permissions' in navigator)) {
+        output.innerText = 'Permission API not available on this device'
+        return;
+    }
+
+    // Validate the accelerometer permission.
+    const accelerometerPermission = await navigator.permissions.query({
+        name: 'accelerometer'
+    });
+    if (accelerometerPermission.state !== 'granted') {
+        output.innerText = 'You are not autorized to use the accelerometer sensor'
+        return
+    }
+    //    Decleare the sensor variable. Create an instance for the Accelerometer
+    let accelerometer;
+    try {
+        accelerometer = new Accelerometer({
+            referenceFrame: 'device' // Either 'device or 'screen'
+        });
+    } catch (error) {
+        output.innerText = 'Accelerometer error:' + error;
+        return
+    }
+
+    // Listening for errors thrown during its use
+    accelerometer.addEventListener('error', (event) => {
+        const errorMessage = event.error;
+        output.innerText = 'Accelerometer failed:' + errorMessage;
+    })
+    // The reading event is fired when a new reading is available on a sensor
+    accelerometer.addEventListener('reading', () => {
+
+    })
+    console.log('acceleromer', accelerometer)
+
+    // Create the helper elements
+    const buttonStart = document.createElement('button')
+    buttonStart.innerText = 'Start';
+    output.appendChild(buttonStart)
+
+    const buttonStop = document.createElement('button')
+    buttonStop.innerText = 'Stop';
+    buttonStop.disabled = true
+    output.appendChild(buttonStop)
+
+    const message = document.createElement('div');
+    message.innerText = 'Click on the start button above;'
+    output.appendChild(message)
+
+
+    // Start the sensor
+
+    buttonStart.addEventListener('click', () => {
+        accelerometer.start();
+
+    })
 }
 
 function handleLinearAccelerationSensor() {
