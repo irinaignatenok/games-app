@@ -474,7 +474,7 @@ async function handleAccelerometer() {
             accelerometer.stop();
             buttonStart.disabled = false;
             buttonStop.disabled = true;
-            message.innerText += '<div>Sensor stoped</div>'
+            message.innerHTML += '<div>Sensor stoped</div>'
         }
         catch {
             message.innerText = 'It was not possible to stop the sensor ' + error.message
