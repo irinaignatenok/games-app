@@ -98,7 +98,33 @@ async function handleBatteryStatusAPI() {
 
 }
 function handleNetworkInformation() {
-    output.innerText = 'Network Information ...'
+    if ('connection' in navigator) {
+
+        // Helper function to write the network information
+        const writeNetworkInfo = () => {
+            console.log("Connection", navigator.connection)
+            const networktype = navigator.connection.type || 'unknown'; //we use unknown if our mochine does not have this property
+            const networkEffectiveType = navigator.connection.effectiveType || 'unknown';
+            const networkDownlink = navigator.connection.downlink || 'unknown';
+            const networkDownlinkMax = navigator.connection.downlinkMax || 'unknown';
+
+            output.innerHTML = `
+            <div>Current network type: <strong>${networktype}</strong></div>
+            <div>Cellular connection type: <strong>${networkEffectiveType}</strong></div>
+            <div>Estimated bandwidth: <strong>${networkDownlink}</strong>Mbps</div>
+            <div>Maximum downlink:<strong>${networkDownlinkMax}</strong> Mbps</div>
+            `;
+
+        }
+        //   Write the initial state 
+        writeNetworkInfo();
+
+        navigator.connection.addEventListener('change', () => {
+            writeNetworkInfo();
+        })
+    } else {
+        output.innerText = 'Network information not available for this device'
+    }
 
 }
 function handleFullscreenAPI() {
