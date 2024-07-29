@@ -198,6 +198,10 @@ function handleScreenOrientationAPI() {
                     message.innerText = `Lock error: ${error}`
                 })
         })
+        buttonUnlock.addEventListener('click', () => {
+            screen.orientation.unlock()
+            message.innerText = 'Orientation unlocked'
+        })
 
     } else {
         output.innerText = 'Screen orientation is not available on the device'
