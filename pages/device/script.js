@@ -263,13 +263,54 @@ function handlePageVisibility() {
 async function handleIdleDetectionAPI() {
     if ('IdleDetector:, IdleDetector') {
         const permisson = await IdleDetector.requestPermission()
+        if (permisson === 'granted') {
+            // Creates a new IdleDetector object.
+            const idleDetector = new IdleDetector();
+            console.log('idleDetector', idleDetector)
+
+            // Helper function to write the state.
+            const writeState = () => {
+                output.innerHTML = `
+                <div>User State: <b>${idleDetector.userState}</b>.</div>
+                <div>Screen state: <b> ${idleDetector.screenState}</b>.</div>
+                `
+            }
+
+            // Start the detector
+            await idleDetector.start({ threshold: 60000 })
+            writeState()
+
+            idleDetector.addEventListener('change', () => {
+                console.log('State Changed', idleDetector)
+                writeState();
+            })
+        } else {
+            output.innerText = 'You must allow using the IdleDetector'
+        }
     } else {
         output.innerText = "IdleDetector not supported on this device"
+
     }
 }
 
-function handleScreenWakeLockAPI() {
-    output.innerText = 'Screen Wake Lock API ....'
+async function handleScreenWakeLockAPI() {
+    if ('wakeLock' in navigator) {
+        const sentinel = await navigator.wakeLock.request('screen')
+        output.innerHTML = `
+        <div>Wake Lock is active</div>`;
+
+        // Create the button to release the lock
+        const button = document.createElement('button');
+        button.innerText = 'Release screen';
+        output.append(button);
+
+        button.addEventListener('click', async () => {
+            await sentinel.release();
+            output.innerHTML = ` 
+            Wake Lock deactivated. <br>
+            The screen was released!`
+        })
+    }
 }
 
 function handleGeolocationAPI() {
