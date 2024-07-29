@@ -209,7 +209,33 @@ function handleScreenOrientationAPI() {
 }
 
 function handleVibrationAPI() {
-    output.innerText = 'Vibration API ...'
+    // Vibration for 200ms
+    if ('vibrate' in navigator) {
+        // Create the helper elements
+
+        const buttonMultiple = document.createElement('button');
+        output.appendChild(buttonMultiple);
+        buttonMultiple.innerHTML = 'Multiple vibration '
+
+        const buttonSingle = document.createElement('button');
+        output.appendChild(buttonSingle);
+        buttonSingle.innerHTML = 'Single vibration'
+
+        // Single vibration
+        buttonSingle.addEventListener('click', () => {
+            navigator.vibrate(200);
+        });
+
+        // Multiple vibration
+        buttonMultiple.addEventListener('click', () => {
+            //A sequence of vibrations ans pauses.
+            navigator.vibrate([200, 100, 200, 300, 600])
+        })
+
+    } else {
+        output.innerText = "Vibration is not supported on ths device";
+    }
+
 }
 
 function handlePageVisibility() {
