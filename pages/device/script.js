@@ -411,7 +411,7 @@ async function handleAccelerometer() {
     let accelerometer;
     try {
         accelerometer = new Accelerometer({
-            frequency: 1,
+            frequency: 60,
             referenceFrame: 'device' // Either 'device or 'screen'
         });
     } catch (error) {
