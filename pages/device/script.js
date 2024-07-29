@@ -537,6 +537,41 @@ async function handleLinearAccelerationSensor() {
 <li> Y-axis is <b>${axisY}</b> m/s<sup>2</sup></li>
 <li> Z-axis is <b>${axisZ}</b> m/s<sup>2</sup></li>
 `
+    });
+    // Create the helper elements;
+    const buttonStart = document.createElement('button');
+    buttonStart.innerText = 'Start';
+    output.appendChild(buttonStart);
+
+    const buttonStop = document.createElement('button');
+    buttonStop.innerText = 'Stop';
+    buttonStop.disabled = true;
+    output.appendChild(buttonStop)
+
+    const message = document.createElement('div')
+    message.innerText = 'Click on the start button above';
+    output.appendChild(message)
+
+    // Start the sensor
+    buttonStart.addEventListener('click', () => {
+        try {
+            linearAcceleration.start();
+            buttonStart.disabled = true;
+        } catch (error) {
+            message.innerText = 'It was not possible to start the sensor' + error.message
+        }
+    })
+
+    // Stop the sensor
+    buttonStop.addEventListener('click', () => {
+        try {
+            linearAcceleration();
+            buttonStart.disabled = false;
+            buttonStop.disabled = true;
+            message.innerHTML += '<div>Sensor stopped!</div> '
+        } catch (error) {
+            message.innerText = 'It was not possible to stop the sensor' + error.message
+        }
     })
 
 }
