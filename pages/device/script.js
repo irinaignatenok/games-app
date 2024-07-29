@@ -447,8 +447,24 @@ async function handleAccelerometer() {
     // Start the sensor
 
     buttonStart.addEventListener('click', () => {
-        accelerometer.start();
+        try {
+            accelerometer.start();
+            buttonStop.disabled = false;
+            buttonStart.disabled = true
+        }
+        catch (error) {
+            message.innerText = 'It was not possible to start the sensor' + error.message
+        }
+    })
 
+    // Listener for the buttpn stop
+    buttonStop.addEventListener('click', () => {
+        try {
+            accelerometer.stop();
+        }
+        catch {
+            message.innerText = 'It was not possible to stop the sensor ' + error.message
+        }
     })
 }
 
