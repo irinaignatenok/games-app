@@ -484,8 +484,61 @@ async function handleAccelerometer() {
     })
 }
 
-function handleLinearAccelerationSensor() {
-    output.innerText = 'LinearAccelerationSensor.....'
+async function handleLinearAccelerationSensor() {
+    // Validate the sensor API
+    if (!('LinearAccelerationSensor' in window)) {
+        output.innerText = 'LinearAccelerationSensor not available on this device.'
+        return
+    }
+    // Validates the Permission API
+    if (!('permissions' in navigator)) {
+        output.innerText = 'Permisiion API not available on this device';
+        return
+    }
+
+    // Validate the accelerometr permission
+    const acceleromerPermission = await navigator.permissions.query({
+        name: 'accelerometer'
+    })
+    if (acceleromerPermission.state !== 'granted') {
+        output.innerText = 'You are not autorized to use the accelerometer sensor.';
+        return;
+    }
+
+    // Declare the sensor variable
+    let linearAcceleration;
+    try {
+        linearAcceleration = new handleLinearAccelerationSensor({
+            frequency: 30,
+            referenceFrame: 'device' //either 'device or 'screen
+        })
+    }
+    catch (error) {
+        output.innerText = 'LiearAccelerationSensor error:' + error
+        return
+    }
+
+    // Listening for the errors thrown during its use
+    linearAcceleration.addEventListener('error', (event) => {
+        const errorMessage = event.errorout
+        output.inneText = 'linearAcceleration failed' + errorMessage;
+    });
+
+    // the reading event is fired when a new reading is available on a screen
+    linearAcceleration.addEventListener('reading', () => {
+        const axisX = linearAcceleration.x.toFixed(2);
+        const axisY = linearAcceleration.y.toFixed(2);
+        const axisZ = linearAcceleration.z.toFixed(2);
+
+        message.innerHTML = ` 
+<div> Linear acceleration along the: </div>
+<ul>
+<li> X-axis is <b>${axisX}</b> m/s<sup>2</sup></li>
+<li> Y-axis is <b>${axisY}</b> m/s<sup>2</sup></li>
+<li> Z-axis is <b>${axisZ}</b> m/s<sup>2</sup></li>
+`
+    })
+
 }
 
 function handleGyroscope() {
