@@ -1,0 +1,13 @@
+#feature-selector{
+    font-size: 1rem;
+    width: 15rem;
+    color:#64646E;
+    margin:0 0 1rem 0;
+    padding: 0.5rem;
+}
+
+#device-output {
+    font-family: sans-serif;
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
