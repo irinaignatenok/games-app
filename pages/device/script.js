@@ -315,6 +315,7 @@ async function handleScreenWakeLockAPI() {
 
 function handleGeolocationAPI() {
     if ('geolocation' in navigator) {
+        console.log("Geolocation", navigator.geolocation)
         navigator.geolocation.getCurrentPosition(
             // On Success callback
             (position) => {
