@@ -411,6 +411,7 @@ async function handleAccelerometer() {
     let accelerometer;
     try {
         accelerometer = new Accelerometer({
+            frequency: 1,
             referenceFrame: 'device' // Either 'device or 'screen'
         });
     } catch (error) {
@@ -425,6 +426,7 @@ async function handleAccelerometer() {
     })
     // The reading event is fired when a new reading is available on a sensor
     accelerometer.addEventListener('reading', () => {
+        console.log('Accelerometer', accelerometer)
         const axisX = accelerometer.x.toFixed(2);
         const axisY = accelerometer.y.toFixed(2);
         const axisZ = accelerometer.z.toFixed(2);
