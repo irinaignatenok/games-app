@@ -1,6 +1,6 @@
 import gameDB from './js/game-db/game-db.js';
 
-const cacheName = 'cacheAssets-v15'
+const cacheName = 'cacheAssets-v11'
 
 // On install Event
 // Triggered when the service worker is installed

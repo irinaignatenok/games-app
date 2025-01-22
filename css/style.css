@@ -12,7 +12,6 @@ body{
     min-height: 100vh;
 }
 
-
 /* Header */
 header .identity{
     display: flex;
@@ -180,7 +179,9 @@ footer{
     text-align: center;
     padding: 0.75rem 0;
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5)
+    color: rgba(255, 255, 255, 0.5);
+     bottom: 0;
+     position: fixed;
 
 }
 
@@ -213,7 +214,7 @@ footer{
     }
 
     /* Menu */
-    header nac {
+    header nav {
         flex-direction: column;
         padding: 0.6rem 0 0;
         align-items: flex-start;

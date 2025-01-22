@@ -3,6 +3,8 @@ import dbOffline from './game-db-local.js';
 
 // GameDB for using cloud or local DB
 
+// Background synchronisation
+
 class GameDB {
     constructor() {
         this.dbOffline = dbOffline

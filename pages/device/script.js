@@ -1,3 +1,4 @@
+
 const output = document.getElementById('device-output')
 
 document.getElementById('feature-selector').addEventListener('change', (event) => {

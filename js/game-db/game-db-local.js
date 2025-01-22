@@ -144,14 +144,14 @@ class GameDB {
             // Transaction handlers.
             const transaction = this.db.transaction(['Game'], 'readonly')
             transaction.onerror = (event) => {
-                reject(eve.target.error.message)
+                reject(event.target.error.message)
             };
 
             // Gets a data from the store
             const store = transaction.objectStore('Game');
             const request = store.get(id);
             request.onerror = (event) => {
-                reject(eve.target.error.message)
+                reject(event.target.error.message)
             }
             request.onsuccess = (event) => {
                 // the data that I received from the db
